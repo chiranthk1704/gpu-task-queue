@@ -39,9 +39,11 @@ def add_task(data: dict):
 def get_next_task():
     session = Session()
     task = session.query(Task).filter_by(status="pending").first()
+    
     if task:
         task.status = "running"
         session.commit()
+        
         response = {
             "task_id": task.id,
             "config": task.task_data.get('config', {}),
@@ -49,8 +51,10 @@ def get_next_task():
         }
         session.close()
         return response
+    
     session.close()
     return {"task_id": None}
+    
 
 @app.post('/complete_task')
 def complete_task(task_id: int, result: dict):
